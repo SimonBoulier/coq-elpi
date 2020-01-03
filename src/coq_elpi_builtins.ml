@@ -11,6 +11,7 @@ module CConv = API.ContextualConversion
 module B = struct
   include API.BuiltInData
   include Elpi.Builtin
+  let ioarg = API.BuiltInPredicate.ioarg
 end
 module Pred = API.BuiltInPredicate
 
@@ -171,11 +172,11 @@ let prop = { B.any with Conv.ty = Conv.TyName "prop" }
 let raw_goal = { B.any with Conv.ty = Conv.TyName "goal" }
 
 let id = { B.string with
-  API.Conversion.ty = Conv.TyName "@id";
+  API.Conversion.ty = Conv.TyName "id";
   pp_doc = (fun fmt () ->
-    Format.fprintf fmt "%% [@id] is a name that matters, we piggy back on Elpi's strings.@\n";
-    Format.fprintf fmt "%% Note: [@name] is a name that does not matter (see coq-HOAS.elpi).@\n";
-    Format.fprintf fmt "macro @id :- string.@\n@\n")
+    Format.fprintf fmt "%% [id] is a name that matters, we piggy back on Elpi's strings.@\n";
+    Format.fprintf fmt "%% Note: [name] is a name that does not matter (see coq-HOAS.elpi).@\n";
+    Format.fprintf fmt "typeabbrev id string.@\n@\n")
 }
 
 
@@ -726,7 +727,7 @@ It undestands qualified names, e.g. "Nat.t".|})),
     In(flag "@opaque?", "Opaque",
     In(flag "@local?", "SectionLocal",
     Out(constant, "C",
-    Full (global, "declare a new constant: C gets a @constant derived "^
+    Full (global, "declare a new constant: C gets a constant derived "^
           "from Name and the current module; Ty can be left unspecified "^
           "and in that case the inferred one is taken (as in writing "^
           "Definition x := t); Bo can be left unspecified and in that case "^
@@ -1260,7 +1261,7 @@ It undestands qualified names, e.g. "Nat.t".|})),
   MLCode(Pred("coq.typecheck",
     CIn(term,  "T",
     COut(term, "Ty",
-    InOut(B.diagnostic, "Diagnostic",
+    InOut(B.ioarg B.diagnostic, "Diagnostic",
     Full (proof_context, "typchecks a term T returning its type Ty. "^
           "Universe constraints are put in the constraint store")))),
   (fun t _ diag ~depth proof_context _ state ->
@@ -1268,14 +1269,15 @@ It undestands qualified names, e.g. "Nat.t".|})),
        let sigma = get_sigma state in
        let sigma, ty = Typing.type_of proof_context.env sigma t in
        let state, assignments = set_current_sigma ~depth state sigma in
-       state, !: ty +! B.(Just OK), assignments
+       state, !: ty +! B.mkOK, assignments
      with Pretype_errors.PretypeError (env, sigma, err) ->
-       (* optimization: don't print the error if caller wants OK *)
        match diag with
-       | Data B.(Just OK) -> raise No_clause
+       | Data B.OK ->
+          (* optimization: don't print the error if caller wants OK *)
+          raise No_clause
        | _ ->
           let error = Pp.string_of_ppcmds @@ Himsg.explain_pretype_error env sigma err in
-          state, ?: None +! B.(Just (ERROR (B.Just error))), [])),
+          state, ?: None +! B.mkERROR error, [])),
   DocAbove);
 
   MLCode(Pred("coq.elaborate",
@@ -1383,7 +1385,7 @@ It undestands qualified names, e.g. "Nat.t".|})),
            else Pp.string_of_ppcmds (Name.print (nameout i)) in
          let s = s ^ suffix in
          !: (Name.mk_name (Id.of_string s))
-     | _ -> err Pp.(str "coq.name-suffix: suffix is not int|string|@name"))),
+     | _ -> err Pp.(str "coq.name-suffix: suffix is not int|string|name"))),
   DocAbove);
 
   MLCode(Pred("coq.string->name",

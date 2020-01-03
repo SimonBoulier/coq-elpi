@@ -10,7 +10,7 @@ pred hd-beta i:term, i:@stack, o:term, o:@stack.
 pred hd-beta-zeta i:term, i:@stack, o:term, o:@stack.
 pred hd-beta-zeta-reduce i:term, o:term.
 pred whd i:term, i:@stack, o:term, o:@stack.
-pred whd-indc i:term, o:@constructor, o:@stack.
+pred whd-indc i:term, o:constructor, o:@stack.
 pred unwind i:term, i:@stack, o:term.
 pred whd1 i:term, o:term.
 
@@ -51,7 +51,7 @@ whd1 T R :-
   not(same_term T R).
 
 % iota step
-pred match-red i:@constructor, i:list term, i:list term, i:@stack, o:term, o:@stack.
+pred match-red i:constructor, i:list term, i:list term, i:@stack, o:term, o:@stack.
 match-red GR KArgs BL C X XC :-
   coq.env.indc GR Lno _ Ki _,
   drop Lno KArgs Args,
@@ -61,13 +61,13 @@ match-red GR KArgs BL C X XC :-
 % iota step
 pred fix-red
   i:(term -> term), i:term,
-  i:list term, i:@constructor, i:list term, i:list term, o:term, o:@stack. 
+  i:list term, i:constructor, i:list term, i:list term, o:term, o:@stack. 
 fix-red F Fix LA GR KA RA X XC :-
   append LA [{mk-app (global (indc GR)) KA}|RA] ArgsWRedRecNo,
   hd-beta {mk-app (F Fix) ArgsWRedRecNo} [] X XC.
 
 pred unfold % delta (global constants) + hd-beta
-  i:@constant,    % name
+  i:constant,    % name
   i:@stack,   % args
   o:term,     % body
   o:@stack.    % args after hd-beta

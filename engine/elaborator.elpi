@@ -346,7 +346,7 @@ mk-rty ARGS HD (prod N S T) (fun N S F) :- !,
 mk-rty ARGS HD _ (fun _ IndApp _FRESH) :-
   mk-app HD {rev ARGS} IndApp.
 
-type mk-bty term -> int -> term -> @constructor -> term -> prop.
+type mk-bty term -> int -> term -> constructor -> term -> prop.
 mk-bty Rty Lno (prod N S T) Ki (prod N S B) :- !,
   pi x\ mk-bty Rty Lno (T x) Ki (B x).
 mk-bty Rty Lno T Ki AppRtyNorm :-

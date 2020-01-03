@@ -118,7 +118,7 @@ constructor (goal Ctx _ Ty _ as G) GS :- do! [
     refine P G GS)
 ].
 
-pred intro i:@name, i:goal, o:list goal.
+pred intro i:name, i:goal, o:list goal.
 intro N G GS :- refine (fun N Src_ Tgt_) G GS.
 
 pred saturate i:term, i:term, o:term.
