@@ -33,12 +33,13 @@ val trace : int -> int -> string list -> string list -> unit
 val bound_steps : int -> unit
 val print : qualified_name -> string list -> unit
 
-type 'a arg = 
+type 'a arg =
   | Int of int
   | String of string
   | Qualid of qualified_name
   | DashQualid of qualified_name
   | Term of 'a
+  | Telescope of 'a
 val pr_arg : ('a -> Pp.t) -> 'a arg -> Pp.t
 val glob_arg : Genintern.glob_sign -> Constrexpr.constr_expr arg -> Genintern.glob_constr_and_expr arg
 val interp_arg : Geninterp.interp_sign -> 'b Evd.sigma -> 'a arg -> Evd.evar_map * (Geninterp.interp_sign * 'a) arg

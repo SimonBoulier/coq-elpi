@@ -31,6 +31,7 @@ kind argument type.
 type int int    -> argument.
 type str string -> argument.
 type trm term   -> argument.
+type tel term   -> argument.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

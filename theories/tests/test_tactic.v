@@ -155,4 +155,12 @@ Qed.
 
 End T1.
 
+From Coq Require Import ssreflect.
 
+Elpi Command tele.
+Elpi Accumulate lp:{{
+main [_, tel T, str F, tel S] :-
+  coq.say T F S.
+}}.
+Set Printing All.
+Elpi tele  Record _ : x of _ ; x : (w :nat := 3) nat.

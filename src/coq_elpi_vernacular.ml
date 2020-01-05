@@ -40,24 +40,28 @@ type 'a arg =
   | Qualid of qualified_name
   | DashQualid of qualified_name
   | Term of 'a
+  | Telescope of 'a
 let pr_arg f = function
   | Int n -> Pp.int n
   | String s -> Pp.qstring s
   | Qualid s -> pr_qualified_name s
   | DashQualid s -> Pp.(str"- " ++ pr_qualified_name s)
   | Term s -> f s
+  | Telescope s -> f s
 let glob_arg glob_sign = function
   | Qualid _ as x -> x
   | DashQualid _ as x -> x
   | Int _ as x -> x
   | String _ as x -> x
   | Term t -> Term (Ltac_plugin.Tacintern.intern_constr glob_sign t)
+  | Telescope t -> Telescope (Ltac_plugin.Tacintern.intern_constr glob_sign t)
 let interp_arg ist evd = function
   | Qualid _ as x -> evd.Evd.sigma, x
   | DashQualid _ as x -> evd.Evd.sigma, x
   | Int _ as x -> evd.Evd.sigma, x
   | String _ as x -> evd.Evd.sigma, x
   | Term t -> evd.Evd.sigma, (Term(ist,t))
+  | Telescope t -> evd.Evd.sigma, (Telescope(ist,t))
 
 type program_name = Loc.t * qualified_name
 
@@ -500,6 +504,7 @@ let to_arg = function
   | Qualid x -> Coq_elpi_goal_HOAS.String (String.concat "." x)
   | DashQualid x -> Coq_elpi_goal_HOAS.String ("-" ^ String.concat "." x)
   | Term g -> Coq_elpi_goal_HOAS.Term g
+  | Telescope t -> Coq_elpi_goal_HOAS.Telescope t
 
 let mainc = ET.Constants.from_stringc "main"
 

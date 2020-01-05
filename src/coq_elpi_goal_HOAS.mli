@@ -8,7 +8,7 @@ open RawData
 type parsed_term =
   Ltac_plugin.Tacinterp.interp_sign * Genintern.glob_constr_and_expr
 
-type arg = String of string | Int of int | Term of parsed_term
+type arg = String of string | Int of int | Term of parsed_term | Telescope of parsed_term
 
 val in_elpi_arg : depth:int ->
            Coq_elpi_HOAS.coq_context ->
